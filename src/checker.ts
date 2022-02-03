@@ -9,7 +9,7 @@ export function getCheckExpression(file): string {
 }
 
 export default function (src, maxOpenFiles, ignore): void {
-  const spinner = ora('Checking for unused Components').start();
+  console.log('Checking for unused Components');
 
   glob(
     '**/*.vue',
@@ -26,7 +26,7 @@ export default function (src, maxOpenFiles, ignore): void {
         files,
         maxOpenFiles || 30,
         function (file, index, cb) {
-          spinner.text = 'Checking for unused Components: ' + file;
+          console.log('Checking for unused Components: ' + file);
           textSearch
             .findAsPromise(new RegExp(getCheckExpression(file), 'i'), ['**/*.{js,jsx,ts,tsx}', '**/*.vue'], {
               cwd: src,
@@ -42,24 +42,27 @@ export default function (src, maxOpenFiles, ignore): void {
         },
         function (err) {
           if (err) {
-            spinner.fail('Error');
+            console.log('Error');
             console.error(err);
             process.exit(1);
           }
 
           if (results.length === 0) {
-            spinner.succeed('No unused Components found.');
+            console.log('No unused Components found.');
             process.exit(0);
           } else {
             results.forEach(function (result) {
+              /*
               spinner.stopAndPersist({
                 text: result,
                 symbol: '-',
                 color: 'red',
               });
-              spinner.start('Checking for unused Components');
+              */
+             console.log('-> '+result)
+              console.log('Checking for unused Components');
             });
-            spinner.fail(results.length + ' unused Component' + (results.length > 1 ? 's' : '') + ' found.');
+            console.error(results.length + ' unused Component' + (results.length > 1 ? 's' : '') + ' found.');
             process.exit(1);
           }
         },
